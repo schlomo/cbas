@@ -23,7 +23,9 @@ class TestCBASConfig(unittest.TestCase):
                     'client_secret': None,
                     'password_provider': 'prompt',
                     'jump_host': None,
-                    'ssh_key_file': '~/.ssh/id_rsa.pub'}
+                    'ssh_key_file': '~/.ssh/id_rsa.pub',
+                    'shortname_prefix': 'not_configured',
+                    'shortname': 'not_configured'}
 
         self.assertEqual(expected, received)
 
