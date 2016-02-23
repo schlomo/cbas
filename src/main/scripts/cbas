@@ -91,6 +91,8 @@ def main(config, **kwargs):
 def upload(config):
     ssh_key = get_sshkey(config.ssh_key_file)
     password = get_password(config.password_provider, config.username)
+    config.build_jumphost_name(config)
+
     access_token = obtain_access_token(config, password)
 
     jump_request_header = {'Authorization': 'Bearer ' + access_token,

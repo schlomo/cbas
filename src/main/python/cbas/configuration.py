@@ -31,6 +31,8 @@ class CBASConfig(collections.MutableMapping):
                'password_provider': DEFAULT_PASSWORD_PROVIDER,
                'jump_host': None,
                'ssh_key_file': DEFAULT_SSH_KEY_FILE,
+               'shortname_prefix': 'not_configured',
+               'shortname': 'not_configured'
                }
 
     def __init__(self):
@@ -68,6 +70,19 @@ class CBASConfig(collections.MutableMapping):
     def __iter__(self):
         return iter(self.options)
 
+    def build_jumphost_name(self, config):
+        if config.shortname_prefix != 'not_configured':
+            if config.jump_host.startswith(config.shortname_prefix):
+                if config.shortname:
+                    config.shortname.replace('%%', config.jump_host)
+                    new_host = config.shortname.replace('%%', config.jump_host)
+                    config.jump_host = new_host
+                    verbose('Shortname und Shortname_prefix defined now working on: {}'.format(new_host))
+
+                verbose('Shortname is not defined')
+            verbose('Shortname_prefix does not starts with {0}'.format(config.shortname_prefix))
+        verbose('Shortname_prefix is not defined')
+
     def inject(self, new_options):
         for option in self.options:
             if option in new_options and new_options[option] is not None:
@@ -82,6 +97,7 @@ class CBASConfig(collections.MutableMapping):
         valid_values_hyphen = {(k.replace('_', '-') for k in CBASConfig.options)}
         valid_values_underscore = set(CBASConfig.options)
         valid_values = valid_values_hyphen.union(valid_values_underscore)
+
         unexpected_values = set(loaded_options).difference(valid_values)
         if unexpected_values:
             raise UnexpectedConfigValues('The following unexpected values were detected {0}'.format(unexpected_values))
